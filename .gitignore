@@ -8,6 +8,12 @@
 *.so
 *.dylib
 
+# System files
+.DS_Store
+
+# Environment variables
+*.env
+
 # Test binary, built with `go test -c`
 *.test
 
