@@ -1,6 +1,8 @@
 package ad
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type ADUser struct {
 	FirstName string   `json:"firstName"`
@@ -32,4 +34,29 @@ func (c *ADClient) GetAllUsers(ou string) ([]*ADUser, error) {
 	}
 
 	return users, nil
+}
+
+// GetUserByEmail retrieves a user from Active Directory based on the email address.
+func (c *ADClient) GetUserByEmail(email string) (*ADUser, error) {
+	searchFilter := fmt.Sprintf("(mail=%s)", email)
+	attributes := []string{"dn", "cn", "givenName", "sn", "mail", "memberOf"}
+
+	searchResult, err := c.Search("DC=xcompany,DC=local", searchFilter, attributes)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(searchResult.Entries) == 0 {
+		return nil, ErrUserNotFound
+	}
+
+	entry := searchResult.Entries[0]
+	user := &ADUser{
+		FirstName: entry.GetAttributeValue("givenName"),
+		LastName:  entry.GetAttributeValue("sn"),
+		Email:     entry.GetAttributeValue("mail"),
+		MemberOf:  entry.GetAttributeValues("memberOf"),
+	}
+
+	return user, nil
 }
