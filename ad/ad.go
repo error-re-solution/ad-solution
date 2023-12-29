@@ -27,3 +27,16 @@ func (c *ADClient) Close() {
 		c.Connection.Close()
 	}
 }
+
+// Search performs an LDAP search operation.
+func (c *ADClient) Search(searchBase, searchFilter string, attributes []string) (*ldap.SearchResult, error) {
+	searchRequest := ldap.NewSearchRequest(
+		searchBase,
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		searchFilter,
+		attributes,
+		nil,
+	)
+
+	return c.Connection.Search(searchRequest)
+}

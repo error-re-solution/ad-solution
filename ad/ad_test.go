@@ -8,15 +8,15 @@ import (
 	"github.com/error-re-solution/ad-solution/config"
 )
 
-type testCase struct {
-	name          string
-	LDAPAddress   string
-	bindDN        string
-	bindPass      string
-	expectedError error
-}
-
 func TestADClient(t *testing.T) {
+	type testCase struct {
+		name          string
+		LDAPAddress   string
+		bindDN        string
+		bindPass      string
+		expectedError error
+	}
+
 	ldap, err := config.LoadLDAPConfig("../")
 	if err != nil {
 		panic(err)
