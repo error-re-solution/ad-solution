@@ -6,6 +6,8 @@ type LDAP struct {
 	Address      string `mapstructure:"ldapAddress"`
 	BindDN       string `mapstructure:"bindDN"`
 	BindPassword string `mapstructure:"bindPassword"`
+	BaseDN       string `mapstructure:"baseDN"`
+	Domain       string `mapstructure:"domain"`
 }
 
 func LoadLDAPConfig(path string) (config LDAP, err error) {

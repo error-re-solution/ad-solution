@@ -85,3 +85,49 @@ func Test_GetUserByEmail(t *testing.T) {
 		})
 	}
 }
+
+func Test_AddUser(t *testing.T) {
+	type testCase struct {
+		name     string
+		username string
+		// password      string
+		email         string
+		baseDN        string
+		domain        string
+		ou            string
+		expectedError error
+	}
+
+	ldap, err := config.LoadLDAPConfig("../")
+	if err != nil {
+		panic(err)
+	}
+
+	client, err := ad.NewADClient(ldap.Address, ldap.BindDN, ldap.BindPassword)
+	if err != nil {
+		panic(err)
+	}
+	defer client.Close()
+
+	testCases := []testCase{
+		{
+			name:     "testingSuccess - AddUser",
+			username: "testUser",
+			// password:      "!2rT5y7u",
+			ou:            "customOU",
+			email:         "testMail@example.local",
+			baseDN:        ldap.BaseDN,
+			expectedError: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := client.AddUser(tc.username /* tc.password */, tc.email, tc.ou, tc.baseDN, tc.domain)
+
+			if !errors.Is(err, tc.expectedError) {
+				t.Errorf("expected error %v, got %v", tc.expectedError, err)
+			}
+		})
+	}
+}
